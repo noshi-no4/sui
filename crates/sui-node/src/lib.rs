@@ -114,7 +114,9 @@ impl SuiNode {
 
             let mut authority_clients = BTreeMap::new();
 
-            if config.enable_reconfig {
+            let system_state = state.get_sui_system_state_object().await?;
+
+            if config.enable_reconfig && system_state.epoch > 0 {
                 // Create NetworkAuthorityClient with this epoch's network information
                 let sui_system_state = state.get_sui_system_state_object().await?;
                 let epoch_validators = &sui_system_state.validators.active_validators;
@@ -122,7 +124,7 @@ impl SuiNode {
                 for validator in epoch_validators {
                     let net_addr: &[u8] = &validator.metadata.net_address.clone();
                     let str_addr = std::str::from_utf8(net_addr)?;
-                    let address: Multiaddr = str_addr.parse().unwrap();
+                    let address: Multiaddr = str_addr.parse()?;
                     //let address = Multiaddr::try_from(net_addr)?;
                     let channel = net_config.connect_lazy(&address)?;
                     let client = NetworkAuthorityClient::new(channel);
