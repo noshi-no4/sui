@@ -607,10 +607,7 @@ fn set_get_checkpoint() {
     let response_ckp = cps1
         .process_checkpoint_certificate(&checkpoint_cert, &None, &committee)
         .unwrap();
-    assert!(matches!(
-        response_ckp.info,
-        AuthorityCheckpointInfo::Success
-    ));
+    assert!(response_ckp);
 
     // Now we have a certified checkpoint
     let response = cps1.handle_past_checkpoint(true, 0).unwrap();
@@ -638,10 +635,7 @@ fn set_get_checkpoint() {
     let response_ckp = cps4
         .process_checkpoint_certificate(&checkpoint_cert, &Some(transactions), &committee)
         .unwrap();
-    assert!(matches!(
-        response_ckp.info,
-        AuthorityCheckpointInfo::Success
-    ));
+    assert!(response_ckp);
 
     // Now we have a certified checkpoint
     let response = cps4.handle_past_checkpoint(true, 0).unwrap();
@@ -1724,6 +1718,6 @@ async fn checkpoint_messaging_flow() {
             )
             .unwrap();
 
-        assert!(matches!(response.info, AuthorityCheckpointInfo::Success));
+        assert!(response);
     }
 }
